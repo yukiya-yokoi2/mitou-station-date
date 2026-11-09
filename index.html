@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🚃 未踏駅デートルーレット</title>
+
+<style>
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    color:#333;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    color:white;
+    margin-bottom:5px;
+}
+
+.subtitle{
+    text-align:center;
+    color:white;
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.station-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:8px;
+    max-height:320px;
+    overflow:auto;
+    margin-top:15px;
+}
+
+label{
+    background:#f6f6f6;
+    padding:8px;
+    border-radius:10px;
+    cursor:pointer;
+    display:block;
+}
+
+button{
+    display:block;
+    width:100%;
+    border:none;
+    padding:16px;
+    margin-top:20px;
+    border-radius:12px;
+    background:#ff5d73;
+    color:white;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.roulette{
+    margin-top:30px;
+    text-align:center;
+}
+
+.slot{
+    background:white;
+    border-radius:20px;
+    padding:30px;
+    min-height:90px;
+    font-size:34px;
+    font-weight:bold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.result{
+    text-align:center;
+    margin-top:25px;
+    display:none;
+}
+
+.result h2{
+    font-size:36px;
+}
+
+.mission{
+    background:#fffbe8;
+    padding:15px;
+    border-radius:15px;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🚃 未踏駅デートルーレット</h1>
+<div class="subtitle">
+降りたことのない駅で、今日だけのお散歩を。
+</div>
+
+<div class="card">
+
+<h3>行ったことがある駅を選んでね</h3>
+
+<div id="stationList" class="station-list"></div>
+
+<button onclick="startRoulette()">
+✨ 運命の駅を決める ✨
+</button>
+
+</div>
+
+<div class="roulette">
+    <div id="slot" class="slot">
+        🚆
+    </div>
+</div>
+
+<div id="result" class="result">
+    <h2>🎉 デートのお散歩駅 🎉</h2>
+    <div id="winner" style="font-size:48px;font-weight:bold;"></div>
+
+    <div id="mission" class="mission"></div>
+</div>
+
+</div>
+
+<script>
+
+const stations = [
+"摂津富田駅",
+"富田駅",
+"JR総持寺駅",
+"総持寺駅",
+"茨木駅",
+"茨木市駅",
+"宇野辺駅",
+"南茨木駅",
+"千里丘駅",
+"摂津市駅",
+"摂津駅",
+"岸辺駅",
+"正雀駅",
+"吹田駅",
+"豊津駅",
+"関大前駅",
+"千里山駅",
+"南千里駅",
+"山田駅",
+"北千里駅",
+"相川駅",
+"上新庄駅",
+"下新庄駅",
+"淡路駅",
+"JR淡路駅",
+"崇禅寺駅",
+"南吹田駅",
+"江坂駅",
+"緑地公園駅",
+"桃山台駅",
+"千里中央駅",
+"箕面船場阪大前駅",
+"箕面萱野駅",
+"東三国駅",
+"東淀川駅",
+"守口市駅",
+"西三荘駅",
+"門真市駅"
+];
+
+const missions = [
+"☕ 知らないカフェに入る",
+"📸 面白い看板を撮影する",
+"🌳 公園を探して散歩する",
+"🍰 スイーツを食べる",
+"⛩ 神社やお寺を見つける",
+"🎁 1000円以内で相手へのお土産を探す",
+"📚 本屋に立ち寄る",
+"🍺 地元のお店を開拓する",
+"🚶 30分以上あてもなく歩く",
+"🌇 夕日が見える場所を探す"
+];
+
+const stationList = document.getElementById("stationList");
+
+stations.forEach(station => {
+    stationList.innerHTML += `
+    <label>
+      <input type="checkbox" value="${station}">
+      ${station}
+    </label>`;
+});
+
+function startRoulette(){
+
+    const checked =
+        [...document.querySelectorAll("input:checked")]
+        .map(x => x.value);
+
+    const candidates =
+        stations.filter(s => !checked.includes(s));
+
+    if(candidates.length === 0){
+        alert("候補駅がありません！");
+        return;
+    }
+
+    document.getElementById("result").style.display = "none";
+
+    const slot = document.getElementById("slot");
+
+    const winner =
+        candidates[Math.floor(Math.random()*candidates.length)];
+
+    let count = 0;
+    let speed = 50;
+
+    function spin(){
+
+        slot.textContent =
+            candidates[Math.floor(Math.random()*candidates.length)];
+
+        count++;
+
+        if(count < 35){
+            setTimeout(spin, speed);
+
+            if(count > 10) speed += 10;
+            if(count > 20) speed += 15;
+            if(count > 30) speed += 40;
+
+        }else{
+
+            slot.textContent = winner;
+
+            document.getElementById("winner").textContent =
+                winner;
+
+            document.getElementById("mission").innerHTML =
+                "<b>本日のミッション</b><br><br>" +
+                missions[Math.floor(Math.random()*missions.length)];
+
+            document.getElementById("result").style.display =
+                "block";
+
+            window.scrollTo({
+                top:document.body.scrollHeight,
+                behavior:"smooth"
+            });
+        }
+    }
+
+    spin();
+}
+</script>
+
+</body>
+</html>
